@@ -149,7 +149,7 @@ public class ChartAggregationComponent {
                         object2 = (Object) field2.get(((List<?>) chartData).get(i));
                         Chart chart = new Chart();
                         if (object2 != null) {
-                            chart.setCaption("Priority:" + object2.toString());
+                            chart.setCaption(chartItem.getGroupBy().get(0)+":" + object2.toString());
                         }
                         chart.setTheme("fusion");
                         chart.setRotateValues("0");

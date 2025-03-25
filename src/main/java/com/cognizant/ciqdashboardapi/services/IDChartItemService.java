@@ -528,9 +528,32 @@ public class IDChartItemService {
                     dataDTO.setChartItemDetails(chartItem);
                     dataDTO.setData(dataTrending);
                 } else if ("yes".equalsIgnoreCase(customFunction)) {
-                    String calculatedResults = metrics.getMetricValues().toJSONString();
-                    JSONArray array = (JSONArray) new JSONParser().parse(calculatedResults);
-                    if (customFunctionName.equalsIgnoreCase("jira_defect_ageing") || customFunctionName.equalsIgnoreCase("jira_defect_ageing_by_drops") || customFunctionName.equalsIgnoreCase("jira_defect_ageing_by_drops_all_status") || customFunctionName.equalsIgnoreCase("custom_infrastructure_spend") || customFunctionName.equalsIgnoreCase("provisioned_vs_utilized") || customFunctionName.equalsIgnoreCase("provisioned_vs_utilized_for_current_month")) {
+                    String calculatedResults = null;
+                    JSONArray array=new JSONArray();
+                    if(!metrics.getMetricValues().isEmpty()){
+                        calculatedResults = metrics.getMetricValues().toJSONString();
+                         array = (JSONArray) new JSONParser().parse(calculatedResults);
+                    }else {
+                         calculatedResults = String.valueOf(metrics.getMetricValue());
+                    }
+                     if (customFunctionName.equalsIgnoreCase("Functional_Automation_Coverage") || customFunctionName.equalsIgnoreCase("Regression_Automation_Coverage")|| customFunctionName.equalsIgnoreCase("Regression_Automation_Coverage_Automable")||customFunctionName.equalsIgnoreCase("Functional_Automation_Coverage_Automable")||customFunctionName.equalsIgnoreCase("Defect_Turn_Around_Time_For_Sev-1")|| customFunctionName.equalsIgnoreCase("Defect_Density")){
+                        System.out.println("inside if condition"+metrics.getMetricValues());
+                        JSONArray jsonArray2 = (JSONArray) new JSONParser().parse(metrics.getMetricValues().toString());
+                         JSONObject jsonObject12 = null;
+                         for(int i=0;  i< jsonArray2.size(); i++){
+                               jsonObject12 = (JSONObject) jsonArray2.get(i);
+                             System.out.println("inside if cjsonArray2ondition 2 loop "+jsonObject12);
+                         }
+                         System.out.println("inside if condition 2"+jsonObject12);
+                        long value4 = (long) jsonObject12.get("value");
+                        data.add(new ChartData(metrics.getMetricName(), value4, null, null, null, null));
+                        if (data.size() > 0) {
+                            Collections.sort(data, new SortByName());
+                        }
+                        dataDTO.setChartItemDetails(chartItem);
+                        dataDTO.setData(data);
+
+                    }else if (customFunctionName.equalsIgnoreCase("jira_defect_ageing") || customFunctionName.equalsIgnoreCase("jira_defect_ageing_by_drops") || customFunctionName.equalsIgnoreCase("jira_defect_ageing_by_drops_all_status") || customFunctionName.equalsIgnoreCase("custom_infrastructure_spend") || customFunctionName.equalsIgnoreCase("provisioned_vs_utilized") || customFunctionName.equalsIgnoreCase("provisioned_vs_utilized_for_current_month")) {
                         System.out.println("DEFECT AGEING FUNCTION ** ");
                         for (int i = 0; i < array.size(); i++) {
                             JSONObject result = (JSONObject) array.get(i);
@@ -541,7 +564,7 @@ public class IDChartItemService {
                         }
                         dataDTO.setChartItemDetails(chartItem);
                         dataDTO.setData(data);
-                    } else if (customFunctionName.equalsIgnoreCase("jira_open_closed_defect_count") || customFunctionName.equalsIgnoreCase("custom_infrastructure_spend_total")) {
+                    } else if (customFunctionName.equalsIgnoreCase("jira_open_closed_defect_count") || customFunctionName.equalsIgnoreCase("custom_infrastructure_spend_total")||customFunctionName.equalsIgnoreCase("Functional_Automation_Coverage_Project")||customFunctionName.equalsIgnoreCase("Functional_Automation_Coverage_Project_Org")) {
                         System.out.println("JIRA OPEN CLOSED DEFECT COUNT ** ");
                         for (int i = 0; i < array.size(); i++) {
                             JSONObject result = (JSONObject) array.get(i);
@@ -552,7 +575,8 @@ public class IDChartItemService {
                         }
                         dataDTO.setChartItemDetails(chartItem);
                         dataDTO.setData(data);
-                    }else if (customFunctionName.equalsIgnoreCase("custom_stc_manual")) {
+                    }
+                    else if (customFunctionName.equalsIgnoreCase("custom_stc_manual")) {
                         System.out.println("CUSTOM STC MANUAL ** ");
                         for (int i = 0; i < array.size(); i++) {
                             JSONObject result = (JSONObject) array.get(i);
@@ -674,7 +698,9 @@ public class IDChartItemService {
                         dataDTO.setChartItemDetails(chartItem);
                         dataDTO.setData(jsonArray);
                     }
-                } else {
+
+                }
+               else {
                     data.add(new ChartData(metrics.getMetricName(), metrics.getMetricValue(), null, null, null, null));
                     if (data.size() > 0) {
                         Collections.sort(data, new SortByName());
